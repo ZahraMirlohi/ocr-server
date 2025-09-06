@@ -1,25 +1,23 @@
 from flask import Flask, request, jsonify
-import base64
 import pytesseract
 from PIL import Image
 import io
+import base64
 
 app = Flask(__name__)
 
 @app.route("/ocr", methods=["POST"])
 def ocr():
+    data = request.get_json()
+    if not data or "imageBase64" not in data:
+        return jsonify({"error": "لطفاً تصویر Base64 ارسال کنید."}), 400
+
+    image_b64 = data["imageBase64"]
+
     try:
-        data = request.json
-        image_base64 = data.get("imageBase64")
-        if not image_base64:
-            return jsonify({"error": "لطفاً تصویر Base64 ارسال کنید."}), 400
-
-        # تبدیل Base64 به تصویر
-        image_bytes = base64.b64decode(image_base64)
+        image_bytes = base64.b64decode(image_b64)
         image = Image.open(io.BytesIO(image_bytes))
-
-        # OCR با زبان فارسی
-        text = pytesseract.image_to_string(image, lang="fas")
+        text = pytesseract.image_to_string(image, lang="fas")  # زبان فارسی
         return jsonify({"text": text})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
