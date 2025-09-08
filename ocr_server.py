@@ -19,7 +19,7 @@ def ocr():
     image = Image.open(io.BytesIO(image_bytes))
 
     # استخراج متن با Tesseract
-    text = pytesseract.image_to_string(image, lang="fas+eng")
+    text = pytesseract.image_to_string(image, lang="fas+eng+ara")
 
     # پاکسازی متن برای خوانایی بهتر
     text = text.replace("\n\n", "\n")  # حذف خطوط خالی اضافی
